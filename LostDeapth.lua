@@ -90,6 +90,8 @@ local function OnCombatEvent_RootInf(eventCode, result, isError, abilityName, ab
 end
 
 IDH_ERE.Load = function()
+	-- not for public use yet
+	if not EADB then return end
     -- put this back in once done testing
     -- if not IDH.isVet then return end
 

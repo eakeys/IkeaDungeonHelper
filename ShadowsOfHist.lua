@@ -7,8 +7,8 @@ IDH_CoS = {
 }
 
 local function UpdateText()
-	you = IDH_CoS.numHitsYou
-	oth = IDH_CoS.numHitsOthers
+	local you = IDH_CoS.numHitsYou
+	local oth = IDH_CoS.numHitsOthers
 	if you == 0 and oth == 0 then
 		IDH_UILineII:SetText("OK")
 		IDH_UILineII:SetColor(unpack(IDH.savedVars.goodColour))
@@ -95,5 +95,5 @@ IDH_CoS.EndUnload = function()
 	IDH_CoS.numHitsYou = 0
 	IDH_CoS.numHitsOthers = 0
 
-	d("[IDH] Unloading Cradle of Shadows, at new location " .. x .. ", " .. y .. ", " .. z)
+	--d("[IDH] Unloading Cradle of Shadows, at new location " .. x .. ", " .. y .. ", " .. z)
 end
