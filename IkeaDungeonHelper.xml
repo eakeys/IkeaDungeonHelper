@@ -1,0 +1,58 @@
+<GuiXml>
+  <Controls>
+    <TopLevelControl name="IDH_UI" mouseEnabled="true" movable="true" clampedToScreen="true" hidden="true">
+      <Dimensions x="600" y="100" />
+      <Anchor point="TOPLEFT" relativeTo="GuiRoot" relativePoint="TOPLEFT" offsetX="100" offsetY="100" />
+		
+		<OnMoveStop>
+			IDH.SaveDragLocation()
+		</OnMoveStop>
+		
+      <Controls>
+        <Label name="IDH_UILineI" width="600" height="25" font="ZoFontWinH1" inheritAlpha="true" color="FFFFFF"
+            wrapMode="TRUNCATE" verticalAlignment="TOP" horizontalAlignment="CENTER" text="Ikea Dungeon Helper">
+          <Anchor point="TOP" relativeTo="$(parent)" relativePoint="TOP" />
+        </Label>
+		
+    <Label name="IDH_UILineII" width="600" height="25" font="ZoFontWinH1" inheritAlpha="true" color="00FF00"
+			wrapMode="TRUNCATE" verticalAlignment="TOP" horizontalAlignment="CENTER" text="Sample main message">
+			<Anchor point="TOP" relativeTo="$(parent)" relativePoint="TOP" offsetY="25"/>
+		</Label>
+
+      </Controls>
+    </TopLevelControl>
+
+    <TopLevelControl name="IDH_Prominent" mouseEnabled="true" movable="true" clampedToScreen="true" hidden="true">
+      <Dimensions x="500" y="100" />
+      <Anchor point="TOPLEFT" relativeTo="GuiRoot" relativePoint="TOPLEFT" offsetX = "1000" offsetY="400" />
+
+      <OnMoveStop>
+        IDH.SaveDragLocation()
+      </OnMoveStop>
+
+      <Controls>
+        <Label name="IDH_Prominent_Text" width="600" height="50" inheritAlpha="true" color="FF0000" font="$(BOLD_FONT)|72|soft-shadow-thick"
+          wrapMode="TRUNCATE" verticalAlignment="TOP" horizontalAlignment="CENTER" text="PROMINENT ALERT">
+          <Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOP" />
+        </Label>
+      </Controls>
+    </TopLevelControl>
+
+    <TopLevelControl name="IDH_Timer_Ctrl" mouseEnabled="true" movable="true" clampedToScreen="true" hidden="true">
+      <Dimensions x="250" y="100" />
+      <Anchor point="TOPLEFT" relativeTo="GuiRoot" relativePoint="TOPLEFT" offsetX="500" offsetY="200" />
+
+      <OnMoveStop>
+        IDH.SaveDragLocation()
+      </OnMoveStop>
+
+      <Controls>
+        <Label name="IDH_Timer" width="600" height="25" font="ZoFontWinH1" inheritAlpha="true" color="FFFFFF"
+          wrapMode="TRUNCATE" verticalAlignment="TOP" horizontalAlignment="LEFT" text="Sample timer: 8.1s">
+            <Anchor point="TOP" relativeTo="$(parent)" relativePoint="TOP" />
+        </Label>
+      </Controls>
+    </TopLevelControl>
+
+  </Controls>
+</GuiXml>

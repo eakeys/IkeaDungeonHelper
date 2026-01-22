@@ -1,0 +1,28 @@
+; This Add-on is not created by, affiliated with or sponsored by ZeniMax Media
+; Inc. or its affiliates. The Elder Scrolls and related logos are registered
+; trademarks or trademarks of ZeniMax Media Inc. in the United States and/or
+; other countries. All rights reserved.
+; https://account.elderscrollsonline.com/add-on-terms
+
+## Title: Ikea Dungeon Helper
+## Description: Extra alerts and trackers for various DLC dungeons
+## Author: Eakeys
+## Version: 0.1.1
+## APIVersion: 101048
+## SavedVariables: IDHSavedVariables
+## DependsOn: LibAddonMenu-2.0 LibCombatAlerts
+
+ShadowsOfHist.lua
+HornsOfReach.lua
+DragonBones.lua
+AscendingTide.lua
+LostDeapth.lua
+FeastOfShadows.lua
+
+IkeaDungeonHelper.lua
+IkeaUI.lua
+IkeaDungeonHelper.xml
+
+; Changelog:
+;
+; see git i cba to update shit here
