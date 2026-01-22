@@ -10,11 +10,11 @@ function IDH.SaveDragLocation()
 	IDH.savedVars.OffsetX = IDH_UI:GetLeft()
 	IDH.savedVars.OffsetY = IDH_UI:GetTop()
 
-	IDH.savedVars.TimerX = IDH_Timer_Ctrl:GetLeft()
-	IDH.savedVars.TimerY = IDH_Timer_Ctrl:GetTop()
+	IDH.savedVars.TimerX = IDHStatus:GetLeft()
+	IDH.savedVars.TimerY = IDHStatus:GetTop()
 
-	IDH.savedVars.ProminentX = IDH_Prominent:GetLeft()
-	IDH.savedVars.ProminentY = IDH_Prominent:GetTop()
+	IDH.savedVars.ProminentX = IDHProminent:GetLeft()
+	IDH.savedVars.ProminentY = IDHProminent:GetTop()
 end
 
 local function ResetAchievementTracking(method)
@@ -79,8 +79,7 @@ function IDH.CreateSettingsMenu()
 			name = "Unlock UI",
 			getFunc = function() return false end, -- don't load in a default.
 			setFunc = function(t)
-				IDH_UI:SetHidden(t == false)
-				IDH_Timer_Ctrl:SetHidden(t == false)
+				IDH.UnlockUI(t)
 			end
 		},
 		

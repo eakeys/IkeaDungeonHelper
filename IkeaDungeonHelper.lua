@@ -15,6 +15,9 @@ IDH = {
 	
 	variableVersion = 1,
 
+	NUM_TIMERS = 2,
+	UITimers = {},
+
 	ZoneIDs = {
 		RUINS_OF_MAZZATUN = 843,
 		CRADLE_OF_SHADOWS = 848,
@@ -190,6 +193,9 @@ IDH = {
 	isVet = false,
 	endUnloadCallback = nil,
 
+	usedTimerPositions = {},
+	numVisibleTimers = 0,
+
 	GetTrackingMode = function(achievId, canBeDoneOnNormal)
 		if (not IDH.isVet and not canBeDoneOnNormal) or (IDH.isVet and canBeDoneOnNormal and not IDH.savedVars.trackNormalAchievsOnVet) then
 			return IDH.AchievementTrackModes.DISABLED
@@ -202,15 +208,78 @@ IDH.ShowProminentAlert = function(msg, sound, volume, duration)
 	for i=1, volume or 1 do
 		PlaySound(sound or SOUNDS.DUEL_START)
 	end
-	IDH_Prominent_Text:SetText(msg)
-	IDH_Prominent:SetHidden(false)
+	IDHProminentLabel:SetText(msg)
+	IDHProminent:SetHidden(false)
 	IDH.prominentAlertRefCount = (IDH.prominentAlertRefCount or 0) + 1
 	zo_callLater(function() 
 		IDH.prominentAlertRefCount = IDH.prominentAlertRefCount - 1
 		if IDH.prominentAlertRefCount == 0 then
-			IDH_Prominent:SetHidden(true)
+			IDHProminent:SetHidden(true)
 		end
 	end, duration or 2500)
+end
+
+IDH.ShowTimer = function(msg, position)
+	position = position or #IDH.usedTimerPositions + 1
+
+	if position > IDH.NUM_TIMERS then return 0 end
+
+	if not IDH.usedTimerPositions[position] then 
+		IDH.usedTimerPositions[position] = true
+		IDH.numVisibleTimers = IDH.numVisibleTimers + 1
+	end
+
+	IDH.UITimers[position]:SetText(msg)
+	IDHStatus:SetHidden(false)
+
+	return position
+end
+
+IDH.HideTimer = function(position)
+	if position > IDH.NUM_TIMERS or not IDH.usedTimerPositions[position] then return end
+	IDH.usedTimerPositions[position] = nil -- nil instead of false so that #table + 1 returns an empty index
+	IDH.numVisibleTimers = IDH.numVisibleTimers - 1
+
+	IDH.UITimers[position]:SetText("")
+	if IDH.numVisibleTimers == 0 then IDHStatus:SetHidden(true) end
+end
+
+IDH.UnlockUI = function(unlocked)
+	if unlocked then
+		IDH.pushUIValues = {
+			UILineI = IDH_UILineI:GetText(),
+			UILineII = IDH_UILineII:GetText(),
+
+			timers = {}
+		}
+		for i=1,IDH.NUM_TIMERS do
+			IDH.pushUIValues.timers[i] = IDH.UITimers[i]:GetText()
+		end
+
+		IDH_UI:SetHidden(false)
+		IDH_UILineI:SetText("Ikea Dungeon Helper")
+		IDH_UILineII:SetText("Sample text")
+
+		for i=1,IDH.NUM_TIMERS do 
+			IDH.UITimers[i]:SetText("Sample timer " .. i .. ": 17s")
+		end
+		
+		IDH_UI:SetHidden(false)
+		IDHStatus:SetHidden(false)
+	else
+		if IDH.pushUIValues then
+			IDH_UILineI:SetText(IDH.pushUIValues.UILineI)
+			IDH_UILineII:SetText(IDH.pushUIValues.UILineII)
+
+			for i=1,IDH.NUM_TIMERS do
+				IDH.UITimers[i]:SetText(IDH.pushUIValues.timers[i])
+			end
+			IDH.pushUIValues = nil
+		end
+
+		IDH_UI:SetHidden(true)
+		IDHStatus:SetHidden(IDH.numVisibleTimers == 0)
+	end
 end
 
 
@@ -273,6 +342,11 @@ local function OnAddOnLoaded(event, addonName)
 		name, desc, pts, ico, done = GetAchievementInfo(value)
 		IDH.defaultVars.trackAchievs[value] = done and "Disabled" or "Chat"
 	end
+
+	for i = 1, IDH.NUM_TIMERS do
+		IDH.UITimers[i] = _G["IDHStatusTimer" .. i]
+		IDH.UITimers[i]:SetText("")
+	end
 	
 	IDH.savedVars = ZO_SavedVars:NewAccountWide("IDHSavedVariables", IDH.variableVersion, nil, IDH.defaultVars)
 
@@ -286,11 +360,11 @@ local function OnAddOnLoaded(event, addonName)
 	IDH_UI:ClearAnchors()
 	IDH_UI:SetAnchor(TOPLEFT, GuiRoot, TOPLEFT, IDH.savedVars.OffsetX, IDH.savedVars.OffsetY)
 
-	IDH_Timer_Ctrl:ClearAnchors()
-	IDH_Timer_Ctrl:SetAnchor(TOPLEFT, GuiRoot, TOPLEFT, IDH.savedVars.TimerX, IDH.savedVars.TimerY)
+	IDHStatus:ClearAnchors()
+	IDHStatus:SetAnchor(TOPLEFT, GuiRoot, TOPLEFT, IDH.savedVars.TimerX, IDH.savedVars.TimerY)
 
-	IDH_Prominent:ClearAnchors()
-	IDH_Prominent:SetAnchor(TOPLEFT, GuiRoot, TOPLEFT, IDH.savedVars.ProminentX or 1000, IDH.savedVars.ProminentY or 500)
+	IDHProminent:ClearAnchors()
+	IDHProminent:SetAnchor(TOPLEFT, GuiRoot, TOPLEFT, IDH.savedVars.ProminentX or 1000, IDH.savedVars.ProminentY or 500)
 	
 	-- Unregister addon load.
 	EVENT_MANAGER:UnregisterForEvent(IDH.name, EVENT_ADD_ON_LOADED)

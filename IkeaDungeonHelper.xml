@@ -22,7 +22,7 @@
       </Controls>
     </TopLevelControl>
 
-    <TopLevelControl name="IDH_Prominent" mouseEnabled="true" movable="true" clampedToScreen="true" hidden="true">
+    <TopLevelControl name="IDHProminent" mouseEnabled="true" movable="true" clampedToScreen="true" hidden="true">
       <Dimensions x="500" y="100" />
       <Anchor point="TOPLEFT" relativeTo="GuiRoot" relativePoint="TOPLEFT" offsetX = "1000" offsetY="400" />
 
@@ -31,25 +31,29 @@
       </OnMoveStop>
 
       <Controls>
-        <Label name="IDH_Prominent_Text" width="600" height="50" inheritAlpha="true" color="FF0000" font="$(BOLD_FONT)|72|soft-shadow-thick"
+        <Label name="$(parent)Label" width="600" height="50" inheritAlpha="true" color="FF0000" font="$(BOLD_FONT)|72|soft-shadow-thick"
           wrapMode="TRUNCATE" verticalAlignment="TOP" horizontalAlignment="CENTER" text="PROMINENT ALERT">
           <Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOP" />
         </Label>
       </Controls>
     </TopLevelControl>
 
-    <TopLevelControl name="IDH_Timer_Ctrl" mouseEnabled="true" movable="true" clampedToScreen="true" hidden="true">
-      <Dimensions x="250" y="100" />
-      <Anchor point="TOPLEFT" relativeTo="GuiRoot" relativePoint="TOPLEFT" offsetX="500" offsetY="200" />
+    <TopLevelControl name="IDHStatus" mouseEnabled="true" movable="true" clampedToScreen="true" hidden="true">
+      <Dimensions x="600" y="200" />
+      <Anchor point="BOTTOM" relativeTo="GuiRoot" relativePoint="CENTER" offsetY="-150" offsetX="600" />
 
       <OnMoveStop>
         IDH.SaveDragLocation()
       </OnMoveStop>
 
       <Controls>
-        <Label name="IDH_Timer" width="600" height="25" font="ZoFontWinH1" inheritAlpha="true" color="FFFFFF"
-          wrapMode="TRUNCATE" verticalAlignment="TOP" horizontalAlignment="LEFT" text="Sample timer: 8.1s">
-            <Anchor point="TOP" relativeTo="$(parent)" relativePoint="TOP" />
+        <Label name="$(parent)Timer1" width="600" height="50" font="ZoFontWinH1" alpha="0.85" color="FFFFFF"
+          wrapMode="TRUNCATE" verticalAlignment="TOP" horizontalAlignment="LEFT" text="Timer 1: 8.1s">
+            <Anchor point="TOP" relativeTo="$(parent)" relativePoint="TOP" offsetY="0" />
+        </Label>
+        <Label name="$(parent)Timer2" width="600" height="50" font="ZoFontWinH1" alpha="0.85" color="FFFFFF"
+          wrapMode="TRUNCATE" verticalAlignment="TOP" horizontalAlignment="LEFT" text="Timer 2: 12s">
+          <Anchor point="TOP" relativeTo="$(parent)" relativePoint="TOP" offsetY="40" />
         </Label>
       </Controls>
     </TopLevelControl>

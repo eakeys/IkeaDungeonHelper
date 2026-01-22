@@ -31,15 +31,15 @@ end
 local function UpdateStormshaperTimer()
     local now = GetFrameTimeMilliseconds()
     if now < IDH_CA.nextInterruptDue then
-        IDH_Timer:SetText(string.format("Stormshaper: %.1fs", (IDH_CA.nextInterruptDue - now) / 1000))
+        IDHStatusTimer1:SetText(string.format("Stormshaper: %.1fs", (IDH_CA.nextInterruptDue - now) / 1000))
     else
-        IDH_Timer:SetText("Stormshaper: SOON")
+        IDHStatusTimer1:SetText("Stormshaper: SOON")
    end 
 end
 
 -- To do: figure out the trigger for calling this function.
 local function StormshaperDidChannel()
-    IDH.ShowProminentAlert("Interrupt Stormshaper!", "DUAL_BOUNDARY_WARNING", 3, 2000)
+    IDH.ShowProminentAlert("Interrupt Stormshaper!", "DUEL_BOUNDARY_WARNING", 3, 2000)
     IDH_CA.nextInterruptDue = GetFrameTimeMilliseconds() + 30000
 end
 
@@ -51,8 +51,7 @@ local function ShowStormshaperTimer()
     EVENT_MANAGER:UnregisterForEvent("IDH_CA_Sarydil_ChatCheck", EVENT_CHAT_MESSAGE_CHANNEL)
     EVENT_MANAGER:UnregisterForUpdate("IDH_CA_Sarydil_HPCheck")
     --d("Showing stormshaper timer!")
-    IDH_Timer:SetText("Stormshaper: SOON")
-    IDH_Timer_Ctrl:SetHidden(false)
+    IDH.ShowTimer("Stormshaper: SOON", 1)
 
     -- Temporary
     IDH_CA.nextInterruptDue = GetFrameTimeMilliseconds() + 30000
@@ -94,16 +93,20 @@ local function OnChangeCombatState(eventcode, is_entering)
             --d("[IDH] Fighting Sarydil!")
             IDH_CA.currentBoss = 2
             --EVENT_MANAGER:RegisterForEvent("IDH_CA_Sarydil", EVENT_COMBAT_EVENT, SarydilTakesDamage)
-            --EVENT_MANAGER:AddFilterForEvent("IDH_CA_Sarydil", EVENT_COMBAT_EVENT, REGISTER_FILTER_COMBAT_RESULT, ACTION_RESULT_DAMAGE)
+            --EVENT_MANAGER:AddFilterForEvent("IDH_CA_Sarydil", EVENT_COMBAT_EVENT, 
+            --    REGISTER_FILTER_COMBAT_RESULT, ACTION_RESULT_DAMAGE)
         
-            EVENT_MANAGER:RegisterForEvent("IDH_CA_Sarydil_ChatCheck", EVENT_CHAT_MESSAGE_CHANNEL, HandleSarydilDialogue)
+            EVENT_MANAGER:RegisterForEvent("IDH_CA_Sarydil_ChatCheck",
+                EVENT_CHAT_MESSAGE_CHANNEL, HandleSarydilDialogue)
             
             EVENT_MANAGER:RegisterForUpdate("IDH_CA_Sarydil_HPCheck", 500, DoSarydilHealthCheck)
-        elseif (boss_name == "Varallion" and (IDH.savedVars.CA_Varallion_TFAlerts or IDH.savedVars.CA_Varallion_TFTimer)) then
+        elseif (boss_name == "Varallion" and
+                (IDH.savedVars.CA_Varallion_TFAlerts or IDH.savedVars.CA_Varallion_TFTimer)) then
             --d("[IDH] Fighting Varallion!")
             IDH_CA.currentBoss = 3
 
-            EVENT_MANAGER:RegisterForEvent("IDH_CA_Varallion_WaveCheck", EVENT_COMBAT_EVENT, HandleVarallionTide)
+            EVENT_MANAGER:RegisterForEvent("IDH_CA_Varallion_WaveCheck",
+                EVENT_COMBAT_EVENT, HandleVarallionTide)
             local id = 159421 -- normal
             if IDH.isVet then
                 local currentHP, maxHP = GetUnitPower("boss1", POWERTYPE_HEALTH)
@@ -114,23 +117,24 @@ local function OnChangeCombatState(eventcode, is_entering)
                 end
             end
             d("Registering " .. id)
-            EVENT_MANAGER:AddFilterForEvent("IDH_CA_Varallion_WaveCheck", EVENT_COMBAT_EVENT, REGISTER_FILTER_ABILITY_ID, id)
-            EVENT_MANAGER:AddFilterForEvent("IDH_CA_Varallion_WaveCheck", EVENT_COMBAT_EVENT, REGISTER_FILTER_COMBAT_RESULT, ACTION_RESULT_BEGIN)
+            EVENT_MANAGER:AddFilterForEvent("IDH_CA_Varallion_WaveCheck", EVENT_COMBAT_EVENT,
+                REGISTER_FILTER_ABILITY_ID, id)
+            EVENT_MANAGER:AddFilterForEvent("IDH_CA_Varallion_WaveCheck", EVENT_COMBAT_EVENT,
+                REGISTER_FILTER_COMBAT_RESULT, ACTION_RESULT_BEGIN)
         
             if IDH.savedVars.CA_Varallion_TFTimer then
                 IDH_CA.lastWave = 0
                 local updateText = function()
                     local dt = (GetFrameTimeMilliseconds() - IDH_CA.lastWave) / 1000
                     if (dt < 60) and (dt > 17) then
-                        IDH_Timer:SetText(string.format("Tidal Force: %.0fs", 60 - dt))
+                        IDHStatusTimer1:SetText(string.format("Tidal Force: %.0fs", 60 - dt))
                     elseif (dt <= 17) then
-                        IDH_Timer:SetText(string.format("Tidal Force: Active (%.0fs)", dt))
+                        IDHStatusTimer1:SetText(string.format("Tidal Force: Active (%.0fs)", dt))
                     else
-                        IDH_Timer:SetText("Tidal Force: SOON")
+                        IDHStatusTimer1:SetText("Tidal Force: SOON")
                     end
                 end
-                updateText()
-                IDH_Timer_Ctrl:SetHidden(false)
+                IDH.ShowTimer("Tidal Force: SOON", 1)
                 EVENT_MANAGER:RegisterForUpdate("IDH_CA_Varallion_WaveTimerUpdate", 50, updateText)
             end
         end
@@ -142,13 +146,13 @@ local function OnChangeCombatState(eventcode, is_entering)
             EVENT_MANAGER:UnregisterForEvent("IDH_CA_Sarydil_ChatCheck", EVENT_CHAT_MESSAGE_CHANNEL)
             EVENT_MANAGER:UnregisterForUpdate("IDH_CA_Sarydil_HPCheck")
             EVENT_MANAGER:UnregisterForUpdate("IDH_CA_Sarydil_TimerUpdate")
-            IDH_Timer_Ctrl:SetHidden(true)
+            IDH.HideTimer(1)
         elseif IDH_CA.currentBoss == 3 then
             IDH_CA.currentBoss = 0
             --d("[IDH] Varallion despawned!")
             EVENT_MANAGER:UnregisterForEvent("IDH_CA_Varallion_WaveCheck", EVENT_COMBAT_EVENT)
             EVENT_MANAGER:UnregisterForUpdate("IDH_CA_Varallion_WaveTimerUpdate")
-            IDH_Timer_Ctrl:SetHidden(true)
+            IDH.HideTimer(1)
         end
     end
 end
@@ -156,9 +160,11 @@ end
 IDH_CA.Load = function()
     d("[IDH] Loaded module for Coral Aerie.")
     EVENT_MANAGER:RegisterForEvent("IDH_CA", EVENT_PLAYER_COMBAT_STATE, OnChangeCombatState)
-    --EVENT_MANAGER:RegisterForEvent("IDH_blah1_samplemechevent", EVENT_COMBAT_EVENT, function() zo_callLater(GenerateRuptureIcons, 1000) end)
+    --EVENT_MANAGER:RegisterForEvent("IDH_blah1_samplemechevent", 
+    --    EVENT_COMBAT_EVENT, function() zo_callLater(GenerateRuptureIcons, 1000) end)
     -- 240244 is the ID of 'Rupture 2 Hide' in logs, which is the start of the mechanic.
-    --EVENT_MANAGER:AddFilterForEvent("IDH_blah1_samplemechevent", EVENT_COMBAT_EVENT, REGISTER_FILTER_ABILITY_ID, 240244)
+    --EVENT_MANAGER:AddFilterForEvent("IDH_blah1_samplemechevent", 
+    --    EVENT_COMBAT_EVENT, REGISTER_FILTER_ABILITY_ID, 240244)
 end
 
 IDH_CA.BeginUnload = function()
