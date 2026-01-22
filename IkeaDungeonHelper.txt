@@ -22,7 +22,3 @@ FeastOfShadows.lua
 IkeaDungeonHelper.lua
 IkeaUI.lua
 IkeaDungeonHelper.xml
-
-; Changelog:
-;
-; see git i cba to update shit here
