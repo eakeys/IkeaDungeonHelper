@@ -3,78 +3,6 @@ IDH_CA = {
 
 }
 
-local function SarydilTakesDamage(eventCode, result, isError, abilityName, abilityGraphic,
-	abilityActionSlotType, sourceName, sourceType, targetName, targetType,
-	hitValue, powerType, damageType, log, sourceUnitId, targetUnitId, abilityId)
-    if (zo_strformat("<<1>>", targetName) == IDH_CA.currentBossName) then
-        d("Sarydil just took " .. hitValue .. " damage from " .. abilityName)
-    else
-        d("Unknown target: " .. zo_strformat("<<1>>", targetName))
-    end
-end
-
-local function SarydilCombatEvent(eventCode, result, isError, abilityName, abilityGraphic,
-	abilityActionSlotType, sourceName, sourceType, targetName, targetType,
-	hitValue, powerType, damageType, log, sourceUnitId, targetUnitId, abilityId)
-
-    if (zo_strformat("<<1>>", targetName) == IDH_CA.currentBossName) then
-        
-    end
-
-    if (sourceName:find("Ascendant Stormshaper")) then
-        d(string.format("Stormshaper mech: result %d, abilityId %d, abilityName %s", result, abilityId, abilityName))
-        return
-    end
-
-    --d(string.format("Combat event. Code %d", eventCode))
-end
-
-local function UpdateStormshaperTimer()
-    local now = GetFrameTimeMilliseconds()
-    if now < IDH_CA.nextInterruptDue then
-        IDHStatusTimer1:SetText(string.format("Stormshaper: %.1fs", (IDH_CA.nextInterruptDue - now) / 1000))
-    else
-        IDHStatusTimer1:SetText("Stormshaper: SOON")
-   end 
-end
-
--- To do: figure out the trigger for calling this function.
-local function StormshaperDidChannel()
-    IDH.ShowProminentAlert("Interrupt Stormshaper!", "DUEL_BOUNDARY_WARNING", 3, 2000)
-    IDH_CA.nextInterruptDue = GetFrameTimeMilliseconds() + 30000
-end
-
-EA_GLOBAL_DEBUG_FN = function() 
-        StormshaperDidChannel()
-    end
-
-local function ShowStormshaperTimer()
-    EVENT_MANAGER:UnregisterForEvent("IDH_CA_Sarydil_ChatCheck", EVENT_CHAT_MESSAGE_CHANNEL)
-    EVENT_MANAGER:UnregisterForUpdate("IDH_CA_Sarydil_HPCheck")
-    --d("Showing stormshaper timer!")
-    IDH.ShowTimer("Stormshaper: SOON", 1)
-
-    -- Temporary
-    IDH_CA.nextInterruptDue = GetFrameTimeMilliseconds() + 30000
-
-    EVENT_MANAGER:RegisterForUpdate("IDH_CA_Sarydil_TimerUpdate", 50, UpdateStormshaperTimer)
-
-    
-end
-
-local function HandleSarydilDialogue(evCode, channelType, fromName, text, isCustomerService, fromDisplayName)
-    if text == "Time to clear you all out." or text == "Mages, into position!" then
-        ShowStormshaperTimer()
-    end
-end
-
-local function DoSarydilHealthCheck()
-    local currentTargetHP, maxTargetHP, effmaxTargetHP = GetUnitPower("boss1", POWERTYPE_HEALTH)
-    if maxTargetHP > 1 and currentTargetHP < maxTargetHP * 0.66 then
-        ShowStormshaperTimer()
-    end
-end
-
 local function HandleVarallionTide(eventCode, result, isError, abilityName, abilityGraphic,
 	abilityActionSlotType, sourceName, sourceType, targetName, targetType,
 	hitValue, powerType, damageType, log, sourceUnitId, targetUnitId, abilityId)
@@ -86,21 +14,23 @@ local function HandleVarallionTide(eventCode, result, isError, abilityName, abil
     IDH_CA.lastWave = GetFrameTimeMilliseconds()
 end
 
+local function UpdateTideTimer()
+    local dt = (GetFrameTimeMilliseconds() - IDH_CA.lastWave) / 1000
+    if (dt < 60) and (dt > 16) then
+        IDHStatusTimer1:SetText(string.format("Tidal Force: %.0fs", 60 - dt))
+    elseif (dt <= 16) then
+        IDHStatusTimer1:SetText(string.format("Tidal Force: Active (%.0fs)", dt))
+    else
+        IDHStatusTimer1:SetText("Tidal Force: SOON")
+    end
+end
+
 local function OnChangeCombatState(eventcode, is_entering)
     if is_entering then
         IDH_CA.currentBossName = GetUnitName("boss1")
         local boss_name = GetUnitName("boss1")
-        if IDH.savedVars.CA_Sarydil_Interrupts and (boss_name == "Sarydil") then
-            --d("[IDH] Fighting Sarydil!")
-            IDH_CA.currentBoss = 2
-            EVENT_MANAGER:RegisterForEvent("IDH_CA_Sarydil", EVENT_COMBAT_EVENT, SarydilCombatEvent)
-        
-            EVENT_MANAGER:RegisterForEvent("IDH_CA_Sarydil_ChatCheck",
-                EVENT_CHAT_MESSAGE_CHANNEL, HandleSarydilDialogue)
-            
-            EVENT_MANAGER:RegisterForUpdate("IDH_CA_Sarydil_HPCheck", 500, DoSarydilHealthCheck)
-        elseif (boss_name == "Varallion" and
-                (IDH.savedVars.CA_Varallion_TFAlerts or IDH.savedVars.CA_Varallion_TFTimer)) then
+        if boss_name == "Varallion" and
+                (IDH.savedVars.CA_Varallion_TFAlerts or IDH.savedVars.CA_Varallion_TFTimer) then
             --d("[IDH] Fighting Varallion!")
             IDH_CA.currentBoss = 3
 
@@ -113,7 +43,6 @@ local function OnChangeCombatState(eventcode, is_entering)
                     id = 168661
                 end
             end
-            d("Registering " .. id)
             EVENT_MANAGER:AddFilterForEvent("IDH_CA_Varallion_WaveCheck", EVENT_COMBAT_EVENT,
                 REGISTER_FILTER_ABILITY_ID, id)
             EVENT_MANAGER:AddFilterForEvent("IDH_CA_Varallion_WaveCheck", EVENT_COMBAT_EVENT,
@@ -121,30 +50,12 @@ local function OnChangeCombatState(eventcode, is_entering)
         
             if IDH.savedVars.CA_Varallion_TFTimer then
                 IDH_CA.lastWave = 0
-                local updateText = function()
-                    local dt = (GetFrameTimeMilliseconds() - IDH_CA.lastWave) / 1000
-                    if (dt < 60) and (dt > 17) then
-                        IDHStatusTimer1:SetText(string.format("Tidal Force: %.0fs", 60 - dt))
-                    elseif (dt <= 17) then
-                        IDHStatusTimer1:SetText(string.format("Tidal Force: Active (%.0fs)", dt))
-                    else
-                        IDHStatusTimer1:SetText("Tidal Force: SOON")
-                    end
-                end
                 IDH.ShowTimer("Tidal Force: SOON", 1)
-                EVENT_MANAGER:RegisterForUpdate("IDH_CA_Varallion_WaveTimerUpdate", 50, updateText)
+                EVENT_MANAGER:RegisterForUpdate("IDH_CA_Varallion_WaveTimerUpdate", 50, UpdateTideTimer)
             end
         end
     else
-        if IDH_CA.currentBoss == 2 then
-            --d("[IDH] Sarydil despawned!")
-            IDH_CA.currentBoss = 0
-            EVENT_MANAGER:UnregisterForEvent("IDH_CA_Sarydil", EVENT_COMBAT_EVENT)
-            EVENT_MANAGER:UnregisterForEvent("IDH_CA_Sarydil_ChatCheck", EVENT_CHAT_MESSAGE_CHANNEL)
-            EVENT_MANAGER:UnregisterForUpdate("IDH_CA_Sarydil_HPCheck")
-            EVENT_MANAGER:UnregisterForUpdate("IDH_CA_Sarydil_TimerUpdate")
-            IDH.HideTimer(1)
-        elseif IDH_CA.currentBoss == 3 then
+        if IDH_CA.currentBoss == 3 then
             IDH_CA.currentBoss = 0
             --d("[IDH] Varallion despawned!")
             EVENT_MANAGER:UnregisterForEvent("IDH_CA_Varallion_WaveCheck", EVENT_COMBAT_EVENT)

@@ -207,15 +207,6 @@ function IDH.CreateSettingsMenu()
 	submenu = addSubmenu("Coral Aerie", optionsData)
 	addHeading("Sarydil", submenu)
 	addAch(achIDs.SUMMERSET_PRESERVATION_SOCIETY, submenu)
-	submenu[#submenu + 1] = {
-		type = "checkbox",
-			name = "[HM] Show Stormshaper interrupt timers",
-			getFunc = function() return IDH.savedVars.CA_Sarydil_Interrupts == true end, -- false if nil.
-			setFunc = function(t)
-				IDH.savedVars.CA_Sarydil_Interrupts = t
-			end,
-		tooltip = "If enabled, will show a countdown to the Ascendant Stormshapers' next interruptible area denial attack. (Experimental!)"
-	}
 	addHeading("Varallion", submenu)
 	submenu[#submenu + 1] = {
 		type = "checkbox",
