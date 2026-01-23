@@ -21,7 +21,8 @@ local function SarydilCombatEvent(eventCode, result, isError, abilityName, abili
         
     end
 
-    if not (sourceName:find("Ascendant Thundermaul")) then
+    if (sourceName:find("Ascendant Stormshaper")) then
+        d(string.format("Stormshaper mech: result %d, abilityId %d, abilityName %s", result, abilityId, abilityName))
         return
     end
 
@@ -92,9 +93,7 @@ local function OnChangeCombatState(eventcode, is_entering)
         if IDH.savedVars.CA_Sarydil_Interrupts and (boss_name == "Sarydil") then
             --d("[IDH] Fighting Sarydil!")
             IDH_CA.currentBoss = 2
-            --EVENT_MANAGER:RegisterForEvent("IDH_CA_Sarydil", EVENT_COMBAT_EVENT, SarydilTakesDamage)
-            --EVENT_MANAGER:AddFilterForEvent("IDH_CA_Sarydil", EVENT_COMBAT_EVENT, 
-            --    REGISTER_FILTER_COMBAT_RESULT, ACTION_RESULT_DAMAGE)
+            EVENT_MANAGER:RegisterForEvent("IDH_CA_Sarydil", EVENT_COMBAT_EVENT, SarydilCombatEvent)
         
             EVENT_MANAGER:RegisterForEvent("IDH_CA_Sarydil_ChatCheck",
                 EVENT_CHAT_MESSAGE_CHANNEL, HandleSarydilDialogue)
@@ -112,8 +111,6 @@ local function OnChangeCombatState(eventcode, is_entering)
                 local currentHP, maxHP = GetUnitPower("boss1", POWERTYPE_HEALTH)
                 if maxHP > 11000000 then -- HM
                     id = 168661
-                else
-                    id = 9999999 -- Don't know the ability id for non-HM
                 end
             end
             d("Registering " .. id)
