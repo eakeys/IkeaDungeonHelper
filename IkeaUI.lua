@@ -54,7 +54,8 @@ function IDH.CreateSettingsMenu()
 	
 	local panelData = {
 		type = "panel",
-		name = "Ikea Dungeon Helper"
+		name = "Ikea Dungeon Helper",
+		registerForRefresh = true,
 	}
 	
 	LAM:RegisterAddonPanel("IDHOptions", panelData)
@@ -236,8 +237,47 @@ function IDH.CreateSettingsMenu()
     addAch(achIDs.UNBURNT_AND_UNSCATHED, submenu)
 
     submenu = addSubmenu("Naj-Caldeesh", optionsData)
+	addHeading("Poxito", submenu)
+	submenu[#submenu + 1] = {
+		type="checkbox",
+		name = "Show totem counter",
+		getFunc = function() return IDH.savedVars.NC_Poxito_TotemCounter == true end,
+		setFunc = function(t)
+			IDH.savedVars.NC_Poxito_TotemCounter = t
+		end,
+		tooltip = "Displays the number of totems (Bone Effigy adds) currently alive. Experimental, might get stuck with wrong count."
+	}
     addAch(achIDs.TOTAL_SELF_CONTROL, submenu)
+	addHeading("Poxito 2.0", submenu)
     addAch(achIDs.PARCHED_STONEWORK, submenu)
+	addHeading("Talen-Lah", submenu)
+	submenu[#submenu + 1] = {
+		type="checkbox",
+		name = "Warn while in unsafe region",
+		getFunc = function() return IDH.savedVars.NC_BS_UnsafeWarn == true end,
+		setFunc = function(t)
+			IDH.savedVars.NC_BS_UnsafeWarn = t 
+		end,
+		tooltip = "Warns (via a purple screen border) when you're too far from the centre and in the path of Bar-Sakka's roll attack."
+	}
+	submenu[#submenu + 1] = {
+		type = "checkbox",
+		name = "Enable sound effect warnings",
+		getFunc = function() return IDH.savedVars.NC_BS_UnsafeSound == true end,
+		setFunc = function(t) IDH.savedVars.NC_BS_UnsafeSound = t end,
+		width = "half",
+		tooltip = "Spams a sound effect while in the unsafe region. Highly obnoxious, but that's what you get for standing in stupid",
+		disabled = function() return not IDH.savedVars.NC_BS_UnsafeWarn end
+	}
+	submenu[#submenu + 1] = {
+		type = "checkbox",
+		name = "Enable warning message",
+		getFunc = function() return IDH.savedVars.NC_BS_UnsafeMsg == true end,
+		setFunc = function(t) IDH.savedVars.NC_BS_UnsafeMsg = t end,
+		width = "half",
+		tooltip = "Adds a prominent message while in the unsafe region telling you to get back to the middle",
+		disabled = function() return not IDH.savedVars.NC_BS_UnsafeWarn end
+	}
     addAch(achIDs.FIGHT_THROUGH_PAIN, submenu)
 
     submenu = addSubmenu("Black Gem Foundry", optionsData)

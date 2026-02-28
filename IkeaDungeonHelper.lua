@@ -282,6 +282,24 @@ IDH.UnlockUI = function(unlocked)
 	end
 end
 
+IDH.MakeCombatEventFunction = function(f)
+	return function(_eventCode, _result, _isError, _abilityName, _abilityGraphic,
+	_abilityActionSlotType, _sourceName, _sourceType, _targetName, _targetType,
+	_hitValue, _powerType, _damageType, _log, _sourceUnitId, _targetUnitId, _abilityId)
+		local params = {
+			eventCode = _eventCode, result = _result,
+			isError = _isError, abilityName = _abilityName,
+			abilityGraphic = _abilityGraphic, abilityActionSlotType = _abilityActionSlotType,
+			sourceName = _sourceName, sourceType = _sourceType,
+			targetName = _targetName, targetType = _targetType,
+			hitValue = _hitValue, powerType = _powerType, damageType = _damageType,
+			log = _log, sourceUnitId = _sourceUnitId, targetUnitId = _targetUnitId,
+			abilityId = _abilityId
+		}
+		return f(params)
+	end
+end
+
 
 --- UI Management nonsense ---
 
