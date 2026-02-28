@@ -166,6 +166,7 @@ IDH_NC.Load = function()
 end
 
 IDH_NC.BeginUnload = function()
+    d("[IDH] Unloaded module for Naj-Caldeesh.")
     EVENT_MANAGER:UnregisterForEvent("IDH_NC_CS", EVENT_PLAYER_COMBAT_STATE)
 end
 
