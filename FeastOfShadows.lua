@@ -170,4 +170,4 @@ IDH_NC.BeginUnload = function()
     EVENT_MANAGER:UnregisterForEvent("IDH_NC_CS", EVENT_PLAYER_COMBAT_STATE)
 end
 
-EA_GLOBAL_DEBUG_FN = function() EVENT_MANAGER:RegisterForUpdate("IDH_NC_Circle", 50, CheckBarSakkaDangerZone) end
+-- EA_GLOBAL_DEBUG_FN = function() EVENT_MANAGER:RegisterForUpdate("IDH_NC_Circle", 50, CheckBarSakkaDangerZone) end
