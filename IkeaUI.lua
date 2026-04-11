@@ -234,7 +234,15 @@ function IDH.CreateSettingsMenu()
     submenu = addSubmenu("Lep Seclusa", optionsData)
     addAch(achIDs.TACTICAL_RECKLESSNESS, submenu)
     addAch(achIDs.UNSINGED_BOOTS, submenu)
-    addAch(achIDs.UNBURNT_AND_UNSCATHED, submenu)
+	submenu[#submenu + 1] = {
+		type="checkbox",
+		name="[Orpheon] Track Slow Descent on self",
+		getFunc = function() return IDH.savedVars.LS_SlowDescentTrack == true end,
+		setFunc = function(t)
+			IDH.savedVars.LS_SlowDescentTrack = t
+		end,
+		tooltip = "Persistently displays whether you are afflicted with Slow Descent and the remaining duration while fighting Orpheon. This can be helpful if going for the Slowed, not Stopped achievement.",
+	}
 
     submenu = addSubmenu("Naj-Caldeesh", optionsData)
 	addHeading("Poxito", submenu)

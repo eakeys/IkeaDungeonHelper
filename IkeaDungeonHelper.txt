@@ -17,6 +17,7 @@ HornsOfReach.lua
 DragonBones.lua
 AscendingTide.lua
 LostDeapth.lua
+FallenBanners.lua
 FeastOfShadows.lua
 
 IkeaDungeonHelper.lua
