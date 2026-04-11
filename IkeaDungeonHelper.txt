@@ -7,7 +7,7 @@
 ## Title: Ikea Dungeon Helper
 ## Description: Extra alerts and trackers for various DLC dungeons
 ## Author: Eakeys
-## Version: 0.1.1
+## Version: 0.1.2
 ## APIVersion: 101048
 ## SavedVariables: IDHSavedVariables
 ## DependsOn: LibAddonMenu-2.0 LibCombatAlerts
