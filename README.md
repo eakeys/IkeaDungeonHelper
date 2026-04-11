@@ -7,6 +7,7 @@ I'm not planning to put this on Minion/EsoUI anytime soon, not least because Ike
 Notably if you download as a ZIP the folder may be called something like IkeaDungeonHelper-main. **You must change this back** to IkeaDungeonHelper!
 
 ## Changelog 
+* v1.3: Added a tracker for Slow Descent in Lep Seclusa.
 * v1.2: Added some features for Naj-Caldeesh: totem counter on first boss, danger zone alerts on last boss
 * v1.1: Partial support for Coral Aerie: Varallion wave timers & alerts (normal and HM only, HM not tested).
 * v1.0: Support for Venomous Evasion in Cradle of Shadows, and Rupture lines in Black Gem Foundry

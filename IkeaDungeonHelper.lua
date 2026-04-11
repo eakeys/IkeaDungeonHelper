@@ -145,7 +145,7 @@ IDH = {
 
 		-- Fallen Banners
 		TACTICAL_RECKLESSNESS = 4144,
-		UNSINGED_BOOTS = 4252,/
+		UNSINGED_BOOTS = 4252,
 
 		-- Feast of Shadows
 		TOTAL_SELF_CONTROL = 4319,
